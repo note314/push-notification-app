@@ -1,14 +1,16 @@
 // Service Worker - 何でもプッシュ通知
 const CACHE_NAME = 'push-notification-app-v1';
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/style.css',
-    '/script.js',
-    '/manifest.json',
-    '/character1.svg',
-    '/character2.svg',
-    '/character3.svg'
+    './',
+    './index.html',
+    './style.css',
+    './script.js',
+    './manifest.json',
+    './character1.png',
+    './character2.png',
+    './character3.png',
+    './icon-192.png',
+    './icon-512.png'
 ];
 
 // インストール時のキャッシュ設定
@@ -47,12 +49,12 @@ self.addEventListener('notificationclick', (event) => {
     event.waitUntil(
         clients.matchAll().then((clientList) => {
             for (const client of clientList) {
-                if (client.url === '/' && 'focus' in client) {
+                if (client.url.includes('push-notification-app') && 'focus' in client) {
                     return client.focus();
                 }
             }
             if (clients.openWindow) {
-                return clients.openWindow('/');
+                return clients.openWindow('./');
             }
         })
     );
@@ -82,8 +84,8 @@ async function scheduleNotification(notification) {
 async function showNotification(notification) {
     const options = {
         body: notification.message,
-        icon: '/character1.svg',
-        badge: '/character1.svg',
+        icon: './character1.png',
+        badge: './icon-192.png',
         vibrate: [200, 100, 200],
         data: {
             id: notification.id,
@@ -92,8 +94,7 @@ async function showNotification(notification) {
         actions: [
             {
                 action: 'view',
-                title: '確認',
-                icon: '/character1.svg'
+                title: '確認'
             },
             {
                 action: 'dismiss',

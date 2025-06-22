@@ -59,7 +59,7 @@ async function initializeApp() {
     // Service Worker登録
     if ('serviceWorker' in navigator) {
         try {
-            await navigator.serviceWorker.register('service-worker.js');
+            await navigator.serviceWorker.register('./service-worker.js');
             console.log('Service Worker registered');
         } catch (error) {
             console.log('Service Worker registration failed:', error);
@@ -73,6 +73,9 @@ async function initializeApp() {
     if ('Notification' in window && Notification.permission === 'default') {
         await Notification.requestPermission();
     }
+    
+    // PWAインストールプロンプト設定
+    setupPWAInstall();
 }
 
 // イベントリスナー設定
@@ -854,5 +857,78 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 最新メッセージを表示
     await updateLatestMessage();
 });
+
+// PWAインストール設定
+let deferredPrompt;
+
+function setupPWAInstall() {
+    // beforeinstallpromptイベントをキャッチ
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // デフォルトのミニインフォバーを防ぐ
+        e.preventDefault();
+        // 後で使用するためにイベントを保存
+        deferredPrompt = e;
+        console.log('PWA install prompt available');
+        showInstallButton();
+    });
+
+    // アプリがインストールされた後
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        hideInstallButton();
+        showMessage('アプリをインストールしました！');
+    });
+}
+
+// インストールボタンを表示
+function showInstallButton() {
+    const installButton = document.createElement('button');
+    installButton.id = 'installButton';
+    installButton.textContent = 'アプリをインストール';
+    installButton.className = 'install-button';
+    installButton.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #4CAF50;
+        color: white;
+        border: 3px solid #000;
+        border-radius: 15px;
+        padding: 12px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 4px 4px 0px #000;
+        z-index: 1000;
+    `;
+    
+    installButton.addEventListener('click', installPWA);
+    document.body.appendChild(installButton);
+}
+
+// インストールボタンを非表示
+function hideInstallButton() {
+    const installButton = document.getElementById('installButton');
+    if (installButton) {
+        installButton.remove();
+    }
+}
+
+// PWAインストール実行
+async function installPWA() {
+    if (!deferredPrompt) {
+        return;
+    }
+    
+    // インストールプロンプトを表示
+    deferredPrompt.prompt();
+    
+    // ユーザーの選択結果を待つ
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to the install prompt: ${outcome}`);
+    
+    // プロンプトを使用済みにする
+    deferredPrompt = null;
+    hideInstallButton();
+}
 
 console.log('何でもプッシュ通知アプリが読み込まれました');
