@@ -56,10 +56,24 @@ const closeButton = document.getElementById('closeButton');
 
 // アプリ初期化
 async function initializeApp() {
-    // Service Worker登録
+    // Service Worker登録（強制更新）
     if ('serviceWorker' in navigator) {
         try {
-            await navigator.serviceWorker.register('./service-worker.js');
+            const registration = await navigator.serviceWorker.register('./service-worker.js', {
+                updateViaCache: 'none'
+            });
+            
+            // Service Worker更新チェック
+            registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        // 新しいバージョンが利用可能
+                        showUpdateAvailable();
+                    }
+                });
+            });
+            
             console.log('Service Worker registered');
         } catch (error) {
             console.log('Service Worker registration failed:', error);
@@ -76,6 +90,38 @@ async function initializeApp() {
     
     // PWAインストールプロンプト設定
     setupPWAInstall();
+}
+
+// 更新通知表示
+function showUpdateAvailable() {
+    const updateNotice = document.createElement('div');
+    updateNotice.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        background: #4CAF50;
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        z-index: 2000;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    `;
+    updateNotice.innerHTML = `
+        🔄 新しいバージョンが利用可能です
+        <button onclick="window.location.reload()" style="
+            background: white;
+            color: #4CAF50;
+            border: none;
+            padding: 8px 15px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        ">更新</button>
+    `;
+    document.body.appendChild(updateNotice);
 }
 
 // イベントリスナー設定

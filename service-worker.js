@@ -1,5 +1,5 @@
 // Service Worker - 何でもプッシュ通知
-const CACHE_NAME = 'push-notification-app-v2';
+const CACHE_NAME = 'push-notification-app-v3';
 const urlsToCache = [
     './',
     './index.html',
@@ -15,11 +15,32 @@ const urlsToCache = [
 
 // インストール時のキャッシュ設定
 self.addEventListener('install', (event) => {
+    // 即座に新しいService Workerをアクティブにする
+    self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
                 return cache.addAll(urlsToCache);
             })
+    );
+});
+
+// アクティベート時に古いキャッシュを削除
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('Deleting old cache:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        }).then(() => {
+            // 新しいService Workerをすべてのタブで制御開始
+            return self.clients.claim();
+        })
     );
 });
 
