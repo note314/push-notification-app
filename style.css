@@ -472,6 +472,31 @@ body {
     box-shadow: 2px 2px 0px #000;
 }
 
+/* PWA スタンドアロンモード対応 */
+.pwa-standalone {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pwa-standalone .container {
+    min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+/* PWA表示モード検出 */
+@media (display-mode: standalone) {
+    body {
+        background-color: #ffff00;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    
+    .container {
+        max-width: 100%;
+        margin: 0;
+        padding: env(safe-area-inset-top, 20px) 20px env(safe-area-inset-bottom, 20px);
+    }
+}
+
 /* スヌーズと曜日選択 */
 .weekday-selector {
     display: flex;

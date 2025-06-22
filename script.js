@@ -878,6 +878,77 @@ function setupPWAInstall() {
         hideInstallButton();
         showMessage('アプリをインストールしました！');
     });
+    
+    // PWAインストール状態を確認
+    checkPWAInstallStatus();
+}
+
+// PWAインストール状態確認
+function checkPWAInstallStatus() {
+    // スタンドアロンモードで実行中かチェック
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        console.log('PWA is running in standalone mode');
+        document.body.classList.add('pwa-standalone');
+    }
+    
+    // Service Worker準備完了後にインストールボタン表示を検討
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(() => {
+            // インストール可能性をチェック
+            setTimeout(() => {
+                if (!deferredPrompt && !window.matchMedia('(display-mode: standalone)').matches) {
+                    console.log('PWA install conditions not met yet');
+                    showFallbackInstallHint();
+                }
+            }, 3000);
+        });
+    }
+}
+
+// フォールバック用インストールヒント
+function showFallbackInstallHint() {
+    // 既にインストールボタンがある場合は何もしない
+    if (document.getElementById('installButton') || document.getElementById('installHint')) {
+        return;
+    }
+    
+    const hint = document.createElement('div');
+    hint.id = 'installHint';
+    hint.innerHTML = `
+        <div style="
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+            z-index: 1000;
+        ">
+            📱 ブラウザメニューから「ホーム画面に追加」または「アプリをインストール」を選択してください
+            <button onclick="this.parentElement.parentElement.remove()" style="
+                background: #ff6b6b;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                margin-left: 10px;
+                border-radius: 5px;
+                cursor: pointer;
+            ">閉じる</button>
+        </div>
+    `;
+    
+    document.body.appendChild(hint);
+    
+    // 10秒後に自動で消す
+    setTimeout(() => {
+        if (hint.parentElement) {
+            hint.remove();
+        }
+    }, 10000);
 }
 
 // インストールボタンを表示
