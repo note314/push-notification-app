@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PNG Icon Generator</title>
+</head>
+<body>
+    <h1>PWA用PNGアイコン生成</h1>
+    <canvas id="canvas192" width="192" height="192" style="border: 1px solid #000; margin: 10px;"></canvas>
+    <canvas id="canvas512" width="512" height="512" style="border: 1px solid #000; margin: 10px;"></canvas>
+    <br>
+    <button onclick="generateIcons()">アイコン生成</button>
+    <br>
+    <a id="download192" style="display: none;">192x192 PNG をダウンロード</a><br>
+    <a id="download512" style="display: none;">512x512 PNG をダウンロード</a>
+
+    <script>
+        function generateIcons() {
+            // 192x192 アイコン
+            const canvas192 = document.getElementById('canvas192');
+            const ctx192 = canvas192.getContext('2d');
+            
+            // 背景
+            ctx192.fillStyle = '#ffff00';
+            ctx192.fillRect(0, 0, 192, 192);
+            
+            // 外枠
+            ctx192.strokeStyle = '#000';
+            ctx192.lineWidth = 6;
+            ctx192.strokeRect(8, 8, 176, 176);
+            
+            // 通知アイコン
+            ctx192.fillStyle = '#fff';
+            ctx192.strokeStyle = '#000';
+            ctx192.lineWidth = 4;
+            ctx192.beginPath();
+            ctx192.moveTo(96, 40);
+            ctx192.lineTo(76, 60);
+            ctx192.lineTo(76, 100);
+            ctx192.lineTo(70, 110);
+            ctx192.lineTo(122, 110);
+            ctx192.lineTo(116, 100);
+            ctx192.lineTo(116, 60);
+            ctx192.closePath();
+            ctx192.fill();
+            ctx192.stroke();
+            
+            // ベル
+            ctx192.fillStyle = '#ff6b6b';
+            ctx192.beginPath();
+            ctx192.arc(96, 120, 8, 0, 2 * Math.PI);
+            ctx192.fill();
+            ctx192.stroke();
+            
+            // 文字
+            ctx192.fillStyle = '#000';
+            ctx192.font = 'bold 24px Arial';
+            ctx192.textAlign = 'center';
+            ctx192.fillText('プッシュ', 96, 150);
+            ctx192.font = 'bold 20px Arial';
+            ctx192.fillText('通知', 96, 175);
+            
+            // 512x512 アイコン（スケール調整）
+            const canvas512 = document.getElementById('canvas512');
+            const ctx512 = canvas512.getContext('2d');
+            
+            // 背景
+            ctx512.fillStyle = '#ffff00';
+            ctx512.fillRect(0, 0, 512, 512);
+            
+            // 外枠
+            ctx512.strokeStyle = '#000';
+            ctx512.lineWidth = 12;
+            ctx512.strokeRect(20, 20, 472, 472);
+            
+            // 通知アイコン
+            ctx512.fillStyle = '#fff';
+            ctx512.strokeStyle = '#000';
+            ctx512.lineWidth = 8;
+            ctx512.beginPath();
+            ctx512.moveTo(256, 100);
+            ctx512.lineTo(200, 140);
+            ctx512.lineTo(200, 260);
+            ctx512.lineTo(180, 290);
+            ctx512.lineTo(332, 290);
+            ctx512.lineTo(312, 260);
+            ctx512.lineTo(312, 140);
+            ctx512.closePath();
+            ctx512.fill();
+            ctx512.stroke();
+            
+            // ベル
+            ctx512.fillStyle = '#ff6b6b';
+            ctx512.strokeStyle = '#000';
+            ctx512.lineWidth = 6;
+            ctx512.beginPath();
+            ctx512.arc(256, 320, 20, 0, 2 * Math.PI);
+            ctx512.fill();
+            ctx512.stroke();
+            
+            // 文字
+            ctx512.fillStyle = '#000';
+            ctx512.font = 'bold 64px Arial';
+            ctx512.textAlign = 'center';
+            ctx512.fillText('プッシュ', 256, 400);
+            ctx512.font = 'bold 48px Arial';
+            ctx512.fillText('通知', 256, 460);
+            
+            // ダウンロードリンク作成
+            canvas192.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const link = document.getElementById('download192');
+                link.href = url;
+                link.download = 'icon-192.png';
+                link.textContent = '192x192 PNG をダウンロード';
+                link.style.display = 'block';
+            });
+            
+            canvas512.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const link = document.getElementById('download512');
+                link.href = url;
+                link.download = 'icon-512.png';
+                link.textContent = '512x512 PNG をダウンロード';
+                link.style.display = 'block';
+            });
+        }
+    </script>
+</body>
+</html>
