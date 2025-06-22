@@ -1,0 +1,34 @@
+{
+    "name": "何でもプッシュ通知",
+    "short_name": "プッシュ通知",
+    "description": "あなたの伝言を届けるPWAアプリ",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffff00",
+    "theme_color": "#ffff00",
+    "orientation": "portrait",
+    "categories": ["productivity", "utilities"],
+    "lang": "ja",
+    "icons": [
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "screenshot1.png",
+            "sizes": "320x640",
+            "type": "image/png",
+            "form_factor": "narrow"
+        }
+    ]
+}

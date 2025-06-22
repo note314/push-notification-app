@@ -1,0 +1,17 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="512" height="512" fill="#ffff00" rx="50"/>
+  
+  <!-- 外枠 -->
+  <rect x="20" y="20" width="472" height="472" fill="none" stroke="#000" stroke-width="12" rx="40"/>
+  
+  <!-- 通知アイコン -->
+  <path d="M256 100 C200 100 160 140 160 196 L160 260 L130 290 L382 290 L352 260 L352 196 C352 140 312 100 256 100 Z" fill="#fff" stroke="#000" stroke-width="8"/>
+  
+  <!-- ベル -->
+  <circle cx="256" cy="320" r="20" fill="#ff6b6b" stroke="#000" stroke-width="6"/>
+  
+  <!-- 文字 -->
+  <text x="256" y="400" text-anchor="middle" font-family="Arial" font-size="64" font-weight="bold" fill="#000">プッシュ</text>
+  <text x="256" y="460" text-anchor="middle" font-family="Arial" font-size="48" font-weight="bold" fill="#000">通知</text>
+</svg>

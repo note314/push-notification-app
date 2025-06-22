@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>何でもプッシュ通知</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffff00">
+    <meta name="description" content="何でもプッシュ通知 - あなたの伝言を届けるPWAアプリ">
+</head>
+<body>
+    <div class="container">
+        <!-- 上段：吹き出し -->
+        <div class="speech-bubble">
+            <div class="speech-text" id="speechText">
+                こんにちは！何か伝言はありますか？
+            </div>
+        </div>
+
+        <!-- 中段：キャラクター -->
+        <div class="character-section">
+            <div class="character-slider" id="characterSlider">
+                <div class="character-item active" data-character="friend">
+                    <img src="character1.png" alt="親友" class="character-img">
+                    <div class="character-name">親友</div>
+                </div>
+                <div class="character-item" data-character="obachan">
+                    <img src="character2.png" alt="おばちゃん" class="character-img">
+                    <div class="character-name">おばちゃん</div>
+                </div>
+                <div class="character-item" data-character="ojisan">
+                    <img src="character3.png" alt="おじさん" class="character-img">
+                    <div class="character-name">おじさん</div>
+                </div>
+            </div>
+            <div class="character-nav">
+                <button class="nav-dot active" data-index="0"></button>
+                <button class="nav-dot" data-index="1"></button>
+                <button class="nav-dot" data-index="2"></button>
+            </div>
+        </div>
+
+        <!-- 下段：伝言ボタン -->
+        <div class="action-section">
+            <button class="message-button" id="messageButton">
+                伝言する
+            </button>
+        </div>
+    </div>
+
+    <!-- モーダル -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content" id="modalContent">
+            <div class="modal-header">
+                <h2 id="modalTitle">伝言する</h2>
+                <button class="close-button" id="closeButton">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 動的に内容が入る -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

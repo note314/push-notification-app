@@ -1,0 +1,551 @@
+/* リセット・基本設定 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', 'Hiragino Sans', 'ヒラギノ角ゴシック', 'Meiryo', 'メイリオ', sans-serif;
+    background-color: #ffff00;
+    color: #000;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+/* メインコンテナ */
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* 上段：吹き出し */
+.speech-bubble {
+    position: relative;
+    background: #fff;
+    border: 4px solid #000;
+    border-radius: 25px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 4px 4px 0px #000;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #000;
+}
+
+.speech-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 16px solid transparent;
+    border-right: 16px solid transparent;
+    border-top: 16px solid #fff;
+}
+
+.speech-text {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    word-break: break-word;
+}
+
+/* 中段：キャラクター */
+.character-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.character-slider {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.character-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease-in-out;
+}
+
+.character-item.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.character-item.prev {
+    transform: translateX(-100%);
+}
+
+.character-img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.character-name {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.character-nav {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nav-dot.active {
+    background: #000;
+}
+
+/* 下段：アクションボタン */
+.action-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-button {
+    background: #ff6b6b;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 15px 40px;
+    border: 4px solid #000;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #000;
+    transition: all 0.2s ease;
+    width: 100%;
+    max-width: 200px;
+}
+
+.message-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px #000;
+}
+
+.message-button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px #000;
+}
+
+/* モーダル */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border: 4px solid #000;
+    border-bottom: none;
+    border-radius: 25px 25px 0 0;
+    box-shadow: 0 -4px 0px #000;
+    max-height: 80vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+.modal-overlay.show .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 3px solid #000;
+    background: #ffff00;
+    border-radius: 21px 21px 0 0;
+}
+
+.modal-header h2 {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.close-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    background: #ff6b6b;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.close-button:hover {
+    background: #ff5252;
+    transform: scale(1.1);
+}
+
+.modal-body {
+    padding: 20px;
+    min-height: 200px;
+}
+
+/* モーダルタブ */
+.modal-tabs {
+    display: flex;
+    border-bottom: 3px solid #000;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: #f0f0f0;
+    border-right: 2px solid #000;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-button:last-child {
+    border-right: none;
+}
+
+.tab-button.active {
+    background: #ffff00;
+    color: #000;
+}
+
+.tab-button:hover {
+    background: #e0e0e0;
+}
+
+.tab-button.active:hover {
+    background: #f0f000;
+}
+
+/* フォームスタイル */
+.notification-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #000;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 10px;
+    border: 3px solid #000;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fff;
+    box-shadow: 2px 2px 0px #000;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #ff6b6b;
+    box-shadow: 2px 2px 0px #ff6b6b;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.submit-button {
+    background: #4CAF50;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 20px;
+    border: 3px solid #000;
+    border-radius: 15px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #000;
+    transition: all 0.2s ease;
+    margin-top: 10px;
+}
+
+.submit-button:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0px #000;
+}
+
+.submit-button:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0px #000;
+}
+
+/* 通知リスト */
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification-item {
+    background: #f9f9f9;
+    border: 3px solid #000;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 3px 3px 0px #000;
+}
+
+.notification-item.active {
+    background: #e8f5e8;
+    border-color: #4CAF50;
+}
+
+.notification-item.inactive {
+    background: #ffe8e8;
+    border-color: #ff6b6b;
+    opacity: 0.7;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.notification-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #000;
+}
+
+.notification-toggle {
+    width: 50px;
+    height: 25px;
+    border-radius: 15px;
+    border: 2px solid #000;
+    background: #ccc;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.notification-toggle.active {
+    background: #4CAF50;
+}
+
+.notification-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #000;
+    transition: all 0.2s ease;
+}
+
+.notification-toggle.active::after {
+    transform: translateX(23px);
+}
+
+.notification-details {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.notification-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-button {
+    padding: 5px 12px;
+    border: 2px solid #000;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.edit-button {
+    background: #FFA500;
+    color: #fff;
+}
+
+.delete-button {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+.action-button:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0px #000;
+}
+
+/* スヌーズと曜日選択 */
+.weekday-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.weekday-selector label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    padding: 4px 8px;
+    border: 2px solid #000;
+    border-radius: 8px;
+    background: #f9f9f9;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.weekday-selector label:hover {
+    background: #e0e0e0;
+}
+
+.weekday-selector input[type="checkbox"]:checked + label,
+.weekday-selector label:has(input[type="checkbox"]:checked) {
+    background: #4CAF50;
+    color: #fff;
+}
+
+.weekday-selector input[type="checkbox"] {
+    margin: 0;
+    width: 14px;
+    height: 14px;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .speech-text {
+        font-size: 14px;
+    }
+    
+    .character-img {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .message-button {
+        font-size: 18px;
+        padding: 12px 30px;
+    }
+}
+
+@media (max-height: 600px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .speech-bubble {
+        min-height: 80px;
+        margin-bottom: 20px;
+    }
+    
+    .character-slider {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .character-img {
+        width: 80px;
+        height: 80px;
+    }
+}

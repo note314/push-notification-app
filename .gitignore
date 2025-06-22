@@ -1,0 +1,15 @@
+# OS files
+.DS_Store
+*.Zone.Identifier
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Node modules (if any)
+node_modules/
+
+# Log files
+*.log
+server.log
