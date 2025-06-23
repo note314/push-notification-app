@@ -1,5 +1,5 @@
 // Service Worker - 何でもプッシュ通知
-const CACHE_NAME = 'push-notification-app-v11-vertical-priority';
+const CACHE_NAME = 'push-notification-app-v12-greeting-fix';
 const urlsToCache = [
     './',
     './index.html',
