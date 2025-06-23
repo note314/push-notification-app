@@ -122,10 +122,10 @@ body {
 }
 
 .character-img {
-    max-width: 100%;
-    max-height: calc(100% - 30px);
+    /* 縦幅優先設定 - 高さを最大限活用 */
+    height: calc(100% - 30px);
     width: auto;
-    height: auto;
+    max-width: 100%;
     object-fit: contain;
     object-position: center;
     margin-bottom: 10px;
@@ -550,11 +550,15 @@ body {
 /* レスポンシブ対応 */
 @media (max-width: 767px) {
     .character-section {
-        min-height: 200px;
+        /* 吹き出しとボタンの間を最大限活用 */
+        flex: 3;
+        min-height: 250px;
     }
     
     .character-slider {
-        min-height: 150px;
+        min-height: 200px;
+        /* 高さを最大限活用 */
+        height: 100%;
     }
 }
 
@@ -567,8 +571,15 @@ body {
         font-size: 14px;
     }
     
+    .character-section {
+        /* スマホ縦向きで最大限拡大 */
+        flex: 4;
+    }
+    
     .character-slider {
-        max-height: calc(100vh - 250px);
+        /* 利用可能な縦スペースを最大限活用 */
+        min-height: calc(100vh - 280px);
+        height: calc(100vh - 280px);
     }
     
     .message-button {
