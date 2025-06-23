@@ -902,6 +902,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 最新メッセージを表示
     await updateLatestMessage();
+    
+    // 画像保護設定
+    setupImageProtection();
 });
 
 // PWAインストール設定
@@ -1046,6 +1049,52 @@ async function installPWA() {
     // プロンプトを使用済みにする
     deferredPrompt = null;
     hideInstallButton();
+}
+
+// 画像保護設定
+function setupImageProtection() {
+    const characterImages = document.querySelectorAll('.character-img');
+    
+    characterImages.forEach(img => {
+        // 右クリック・長押し禁止
+        img.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        // ドラッグ開始禁止
+        img.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        // 画像選択禁止
+        img.addEventListener('selectstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        // タッチ長押し禁止 (iOS Safari)
+        img.addEventListener('touchstart', (e) => {
+            img.style.webkitTouchCallout = 'none';
+        });
+        
+        // ドラッグ属性確実に設定
+        img.setAttribute('draggable', 'false');
+        img.setAttribute('ondragstart', 'return false;');
+        img.setAttribute('onselectstart', 'return false;');
+    });
+    
+    // 文書全体でキーボードショートカット無効化
+    document.addEventListener('keydown', (e) => {
+        // Ctrl+S (保存), Ctrl+A (全選択), F12 (開発者ツール) など
+        if (e.ctrlKey && (e.key === 's' || e.key === 'a')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
+    console.log('画像保護設定が適用されました');
 }
 
 console.log('何でもプッシュ通知アプリが読み込まれました');
