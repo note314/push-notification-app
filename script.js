@@ -803,12 +803,44 @@ function editNotification(id) {
 }
 
 // Service Workerに通知をスケジュール
+// Service Workerとの通知スケジュール連携
 async function scheduleNotificationWithServiceWorker(notification) {
-    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({
-            type: 'SCHEDULE_NOTIFICATION',
-            notification: notification
-        });
+    try {
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            // Service Workerに通知スケジュールを依頼
+            navigator.serviceWorker.controller.postMessage({
+                type: 'SCHEDULE_NOTIFICATION',
+                notification: notification
+            });
+            
+            // Service Workerからの応答を処理
+            return new Promise((resolve, reject) => {
+                const messageChannel = new MessageChannel();
+                messageChannel.port1.onmessage = (event) => {
+                    if (event.data.success) {
+                        resolve(event.data);
+                    } else {
+                        reject(new Error(event.data.error || 'Service Workerスケジュールエラー'));
+                    }
+                };
+                
+                // タイムアウト設定（5秒）
+                setTimeout(() => {
+                    reject(new Error('Service Workerスケジュールタイムアウト'));
+                }, 5000);
+                
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'SCHEDULE_NOTIFICATION',
+                    notification: notification
+                }, [messageChannel.port2]);
+            });
+        } else {
+            console.warn('Service Workerが利用できません。メインスレッドで処理します。');
+            return Promise.resolve({ success: true, fallback: true });
+        }
+    } catch (error) {
+        console.error('Service Worker連携エラー:', error);
+        throw error;
     }
 }
 
@@ -959,23 +991,38 @@ async function handleScheduleNotification(notification) {
 
 // 通知処理実行
 async function processTriggeredNotification(notification) {
-    // 通知表示
-    showBrowserNotification(notification);
-    
-    // UI更新
-    updateSpeechBubble(notification.message);
-    
-    // 履歴保存
-    await saveToHistory(notification);
-    
-    // タイプ別処理
-    switch (notification.type) {
-        case 'timer':
-            await handleTimerNotification(notification);
-            break;
-        case 'schedule':
-            await handleScheduleNotification(notification);
-            break;
+    try {
+        console.log(`通知実行: ${notification.title} - ${notification.message}`);
+        
+        // 通知表示
+        showBrowserNotification(notification);
+        
+        // UI更新
+        updateSpeechBubble(notification.message);
+        
+        // 履歴保存
+        await saveToHistory(notification);
+        
+        // タイプ別処理
+        switch (notification.type) {
+            case 'timer':
+                await handleTimerNotification(notification);
+                break;
+            case 'schedule':
+                await handleScheduleNotification(notification);
+                break;
+            default:
+                console.warn(`未知の通知タイプ: ${notification.type}`);
+        }
+        
+        console.log(`通知処理完了: ${notification.id}`);
+    } catch (error) {
+        console.error('通知処理エラー:', error);
+        console.error('エラー対象通知:', notification);
+        
+        // エラー時もUI更新は行う
+        updateSpeechBubble(`通知エラー: ${notification.title}`);
+        showMessage('通知の処理中にエラーが発生しました', 'error');
     }
 }
 
@@ -996,10 +1043,17 @@ async function checkAndProcessNotifications() {
 }
 
 // 定期的な通知チェック開始
+// 定期的な通知チェック開始（高精度）
 function startNotificationChecker() {
+    // 初回実行
+    checkAndProcessNotifications();
+    
+    // 15秒ごとの高頻度チェック
     setInterval(async () => {
         await checkAndProcessNotifications();
-    }, 30000); // 30秒ごとにチェック
+    }, 15000);
+    
+    console.log('通知チェッカーが15秒間隔で開始されました');
 }
 
 // 履歴への保存

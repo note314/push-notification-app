@@ -1,5 +1,5 @@
 // Service Worker - 何でもプッシュ通知
-const CACHE_NAME = 'push-notification-app-v12-greeting-fix';
+const CACHE_NAME = 'push-notification-app-v13-notification-fix';
 const urlsToCache = [
     './',
     './index.html',
@@ -84,7 +84,27 @@ self.addEventListener('notificationclick', (event) => {
 // メッセージ受信処理
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SCHEDULE_NOTIFICATION') {
-        scheduleNotification(event.data.notification);
+        try {
+            scheduleNotification(event.data.notification);
+            
+            // 成功応答を送信
+            if (event.ports && event.ports[0]) {
+                event.ports[0].postMessage({
+                    success: true,
+                    message: '通知がスケジュールされました'
+                });
+            }
+        } catch (error) {
+            console.error('通知スケジュールエラー:', error);
+            
+            // エラー応答を送信
+            if (event.ports && event.ports[0]) {
+                event.ports[0].postMessage({
+                    success: false,
+                    error: error.message
+                });
+            }
+        }
     }
 });
 
