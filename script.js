@@ -305,65 +305,97 @@ function switchTab(tabName) {
 }
 
 // 通知作成フォーム
+// フォーム基本フィールド生成
+function renderBasicFields() {
+    return `
+        <div class="form-group">
+            <label for="notificationTitle">通知タイトル</label>
+            <input type="text" id="notificationTitle" maxlength="50" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="notificationMessage">メッセージ</label>
+            <textarea id="notificationMessage" maxlength="200" required></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="notificationType">通知タイプ</label>
+            <select id="notificationType" required>
+                <option value="timer">タイマー（○分後）</option>
+                <option value="schedule">スケジュール（日時指定）</option>
+            </select>
+        </div>
+    `;
+}
+
+// タイマー設定フィールド生成
+function renderTimerOptions() {
+    return `
+        <div class="form-group" id="timerGroup">
+            <label for="timerMinutes">何分後？</label>
+            <input type="number" id="timerMinutes" min="1" max="1440" value="5">
+            <div class="form-group" style="margin-top: 10px;">
+                <label>
+                    <input type="checkbox" id="snoozeEnabled"> スヌーズ機能を有効にする
+                </label>
+            </div>
+            <div class="form-group" id="snoozeGroup" style="display: none; margin-top: 10px;">
+                <label for="snoozeMinutes">スヌーズ間隔（分）</label>
+                <input type="number" id="snoozeMinutes" min="1" max="60" value="5">
+                <label for="snoozeCount">最大スヌーズ回数</label>
+                <input type="number" id="snoozeCount" min="1" max="10" value="3">
+            </div>
+        </div>
+    `;
+}
+
+// スケジュール設定フィールド生成
+function renderScheduleOptions() {
+    return `
+        <div class="form-group" id="scheduleGroup" style="display: none;">
+            <label for="scheduleDateTime">日時指定</label>
+            <input type="datetime-local" id="scheduleDateTime">
+            <div class="form-group" style="margin-top: 10px;">
+                <label>
+                    <input type="checkbox" id="repeatEnabled"> 繰り返し設定
+                </label>
+            </div>
+            <div class="form-group" id="repeatGroup" style="display: none; margin-top: 10px;">
+                <label>繰り返し曜日</label>
+                ${renderWeekdaySelector()}
+            </div>
+        </div>
+    `;
+}
+
+// 曜日選択UI生成
+function renderWeekdaySelector() {
+    const weekdays = [
+        { value: 0, name: '日' },
+        { value: 1, name: '月' },
+        { value: 2, name: '火' },
+        { value: 3, name: '水' },
+        { value: 4, name: '木' },
+        { value: 5, name: '金' },
+        { value: 6, name: '土' }
+    ];
+    
+    return `
+        <div class="weekday-selector">
+            ${weekdays.map(day => 
+                `<label><input type="checkbox" value="${day.value}"> ${day.name}</label>`
+            ).join('')}
+        </div>
+    `;
+}
+
+// 通知作成フォーム全体生成
 function renderCreateNotificationForm() {
     return `
         <form id="notificationForm" class="notification-form">
-            <div class="form-group">
-                <label for="notificationTitle">通知タイトル</label>
-                <input type="text" id="notificationTitle" maxlength="50" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="notificationMessage">メッセージ</label>
-                <textarea id="notificationMessage" maxlength="200" required></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="notificationType">通知タイプ</label>
-                <select id="notificationType" required>
-                    <option value="timer">タイマー（○分後）</option>
-                    <option value="schedule">スケジュール（日時指定）</option>
-                </select>
-            </div>
-            
-            <div class="form-group" id="timerGroup">
-                <label for="timerMinutes">何分後？</label>
-                <input type="number" id="timerMinutes" min="1" max="1440" value="5">
-                <div class="form-group" style="margin-top: 10px;">
-                    <label>
-                        <input type="checkbox" id="snoozeEnabled"> スヌーズ機能を有効にする
-                    </label>
-                </div>
-                <div class="form-group" id="snoozeGroup" style="display: none; margin-top: 10px;">
-                    <label for="snoozeMinutes">スヌーズ間隔（分）</label>
-                    <input type="number" id="snoozeMinutes" min="1" max="60" value="5">
-                    <label for="snoozeCount">最大スヌーズ回数</label>
-                    <input type="number" id="snoozeCount" min="1" max="10" value="3">
-                </div>
-            </div>
-            
-            <div class="form-group" id="scheduleGroup" style="display: none;">
-                <label for="scheduleDateTime">日時指定</label>
-                <input type="datetime-local" id="scheduleDateTime">
-                <div class="form-group" style="margin-top: 10px;">
-                    <label>
-                        <input type="checkbox" id="repeatEnabled"> 繰り返し設定
-                    </label>
-                </div>
-                <div class="form-group" id="repeatGroup" style="display: none; margin-top: 10px;">
-                    <label>繰り返し曜日</label>
-                    <div class="weekday-selector">
-                        <label><input type="checkbox" value="0"> 日</label>
-                        <label><input type="checkbox" value="1"> 月</label>
-                        <label><input type="checkbox" value="2"> 火</label>
-                        <label><input type="checkbox" value="3"> 水</label>
-                        <label><input type="checkbox" value="4"> 木</label>
-                        <label><input type="checkbox" value="5"> 金</label>
-                        <label><input type="checkbox" value="6"> 土</label>
-                    </div>
-                </div>
-            </div>
-            
+            ${renderBasicFields()}
+            ${renderTimerOptions()}
+            ${renderScheduleOptions()}
             <button type="submit" class="submit-button">通知を作成</button>
         </form>
     `;
@@ -525,50 +557,123 @@ function handleNotificationTypeChange() {
     }
 }
 
+// フォームデータ検証
+function validateFormData() {
+    const title = document.getElementById('notificationTitle').value;
+    const message = document.getElementById('notificationMessage').value;
+    const type = document.getElementById('notificationType').value;
+    
+    if (!title.trim() || !message.trim() || !type) {
+        throw new Error('必須項目を入力してください');
+    }
+    
+    if (type === 'schedule') {
+        const scheduleDateTime = document.getElementById('scheduleDateTime').value;
+        if (!scheduleDateTime) {
+            throw new Error('日時を指定してください');
+        }
+        
+        const scheduleTime = new Date(scheduleDateTime);
+        if (scheduleTime <= new Date()) {
+            throw new Error('未来の日時を指定してください');
+        }
+    }
+    
+    return {
+        title: title.trim(),
+        message: message.trim(),
+        type
+    };
+}
+
+// タイマー通知データ構築
+function buildTimerNotification(baseData) {
+    const timerMinutes = parseInt(document.getElementById('timerMinutes').value);
+    const notificationData = {
+        ...baseData,
+        timerMinutes,
+        nextTrigger: new Date(Date.now() + timerMinutes * 60000).toISOString()
+    };
+    
+    // スヌーズ設定処理
+    if (document.getElementById('snoozeEnabled').checked) {
+        Object.assign(notificationData, processSnoozeSettings());
+    }
+    
+    return notificationData;
+}
+
+// スケジュール通知データ構築
+function buildScheduleNotification(baseData) {
+    const scheduleDateTime = document.getElementById('scheduleDateTime').value;
+    const notificationData = {
+        ...baseData,
+        scheduleDateTime,
+        nextTrigger: new Date(scheduleDateTime).toISOString()
+    };
+    
+    // 繰り返し設定処理
+    if (document.getElementById('repeatEnabled').checked) {
+        Object.assign(notificationData, processRepeatSettings());
+    }
+    
+    return notificationData;
+}
+
+// スヌーズ設定処理
+function processSnoozeSettings() {
+    return {
+        snoozeEnabled: true,
+        snoozeMinutes: parseInt(document.getElementById('snoozeMinutes').value),
+        snoozeCount: parseInt(document.getElementById('snoozeCount').value),
+        snoozeRemaining: parseInt(document.getElementById('snoozeCount').value)
+    };
+}
+
+// 繰り返し設定処理
+function processRepeatSettings() {
+    const weekdays = Array.from(document.querySelectorAll('.weekday-selector input[type="checkbox"]:checked'))
+        .map(cb => parseInt(cb.value));
+    
+    if (weekdays.length > 0) {
+        return {
+            repeatWeekdays: weekdays,
+            isRepeating: true
+        };
+    }
+    
+    return {};
+}
+
 // フォーム送信処理
 async function handleFormSubmit(e) {
     e.preventDefault();
     
-    const formData = new FormData(e.target);
-    const notificationData = {
-        title: document.getElementById('notificationTitle').value,
-        message: document.getElementById('notificationMessage').value,
-        type: document.getElementById('notificationType').value,
-        active: true,
-        createdAt: new Date().toISOString()
-    };
-
-    // タイプ別の追加データ
-    switch (notificationData.type) {
-        case 'timer':
-            notificationData.timerMinutes = parseInt(document.getElementById('timerMinutes').value);
-            notificationData.nextTrigger = new Date(Date.now() + notificationData.timerMinutes * 60000).toISOString();
-            
-            // スヌーズ設定
-            if (document.getElementById('snoozeEnabled').checked) {
-                notificationData.snoozeEnabled = true;
-                notificationData.snoozeMinutes = parseInt(document.getElementById('snoozeMinutes').value);
-                notificationData.snoozeCount = parseInt(document.getElementById('snoozeCount').value);
-                notificationData.snoozeRemaining = notificationData.snoozeCount;
-            }
-            break;
-        case 'schedule':
-            notificationData.scheduleDateTime = document.getElementById('scheduleDateTime').value;
-            notificationData.nextTrigger = new Date(notificationData.scheduleDateTime).toISOString();
-            
-            // 曜日繰り返し設定
-            if (document.getElementById('repeatEnabled').checked) {
-                const weekdays = Array.from(document.querySelectorAll('.weekday-selector input[type="checkbox"]:checked'))
-                    .map(cb => parseInt(cb.value));
-                if (weekdays.length > 0) {
-                    notificationData.repeatWeekdays = weekdays;
-                    notificationData.isRepeating = true;
-                }
-            }
-            break;
-    }
-
     try {
+        // フォームデータ検証
+        const validatedData = validateFormData();
+        
+        // 基本データ構築
+        const baseData = {
+            ...validatedData,
+            active: true,
+            createdAt: new Date().toISOString()
+        };
+        
+        // タイプ別データ構築
+        let notificationData;
+        switch (baseData.type) {
+            case 'timer':
+                notificationData = buildTimerNotification(baseData);
+                break;
+            case 'schedule':
+                notificationData = buildScheduleNotification(baseData);
+                break;
+            default:
+                throw new Error('無効な通知タイプです');
+        }
+        
+        // データベースに保存
         const notificationId = await saveNotification(notificationData);
         
         // Service Workerに通知をスケジュール
@@ -577,19 +682,15 @@ async function handleFormSubmit(e) {
             id: notificationId
         });
         
-        // 成功メッセージ表示
+        // 成功時の処理
         showMessage('通知を作成しました！');
-        
-        // フォームリセット
         e.target.reset();
         handleNotificationTypeChange();
-        
-        // 通知一覧を更新
         await refreshNotificationList();
         
     } catch (error) {
         console.error('通知の保存に失敗しました:', error);
-        showMessage('通知の作成に失敗しました。', 'error');
+        showMessage(error.message || '通知の作成に失敗しました。', 'error');
     }
 }
 
@@ -766,67 +867,102 @@ async function getNotificationHistory() {
     });
 }
 
-// 定期的な通知チェック
+// 通知実行判定
+function shouldTriggerNotification(notification, now) {
+    return notification.active && new Date(notification.nextTrigger) <= now;
+}
+
+// ブラウザ通知表示
+function showBrowserNotification(notification) {
+    if (Notification.permission === 'granted') {
+        new Notification(notification.title, {
+            body: notification.message,
+            icon: characters[currentCharacterIndex].image,
+            vibrate: [200, 100, 200]
+        });
+    }
+}
+
+// UI更新（吹き出し）
+function updateSpeechBubble(message) {
+    speechText.textContent = message;
+}
+
+// タイマー通知処理
+async function handleTimerNotification(notification) {
+    if (notification.snoozeEnabled && notification.snoozeRemaining > 0) {
+        // スヌーズ処理
+        notification.snoozeRemaining--;
+        notification.nextTrigger = new Date(Date.now() + notification.snoozeMinutes * 60000).toISOString();
+        await updateNotification(notification);
+    } else {
+        // スヌーズ終了または無効の場合は停止
+        notification.active = false;
+        await updateNotification(notification);
+    }
+}
+
+// スケジュール通知処理
+async function handleScheduleNotification(notification) {
+    if (notification.isRepeating && notification.repeatWeekdays) {
+        // 次の実行曜日を計算
+        const nextTrigger = calculateNextWeeklyTrigger(notification);
+        if (nextTrigger) {
+            notification.nextTrigger = nextTrigger.toISOString();
+            await updateNotification(notification);
+        } else {
+            notification.active = false;
+            await updateNotification(notification);
+        }
+    } else {
+        // 一回限りのスケジュール通知は無効化
+        notification.active = false;
+        await updateNotification(notification);
+    }
+}
+
+// 通知処理実行
+async function processTriggeredNotification(notification) {
+    // 通知表示
+    showBrowserNotification(notification);
+    
+    // UI更新
+    updateSpeechBubble(notification.message);
+    
+    // 履歴保存
+    await saveToHistory(notification);
+    
+    // タイプ別処理
+    switch (notification.type) {
+        case 'timer':
+            await handleTimerNotification(notification);
+            break;
+        case 'schedule':
+            await handleScheduleNotification(notification);
+            break;
+    }
+}
+
+// 通知チェック処理
+async function checkAndProcessNotifications() {
+    try {
+        const notifications = await getNotifications();
+        const now = new Date();
+        
+        for (const notification of notifications) {
+            if (shouldTriggerNotification(notification, now)) {
+                await processTriggeredNotification(notification);
+            }
+        }
+    } catch (error) {
+        console.error('通知チェックエラー:', error);
+    }
+}
+
+// 定期的な通知チェック開始
 function startNotificationChecker() {
     setInterval(async () => {
-        try {
-            const notifications = await getNotifications();
-            const now = new Date();
-            
-            for (const notification of notifications) {
-                if (notification.active && new Date(notification.nextTrigger) <= now) {
-                    // 通知表示
-                    if (Notification.permission === 'granted') {
-                        new Notification(notification.title, {
-                            body: notification.message,
-                            icon: characters[currentCharacterIndex].image,
-                            vibrate: [200, 100, 200]
-                        });
-                    }
-                    
-                    // 吹き出しを更新
-                    speechText.textContent = notification.message;
-                    
-                    // 履歴に保存
-                    await saveToHistory(notification);
-                    
-                    // タイマー通知の処理
-                    if (notification.type === 'timer') {
-                        if (notification.snoozeEnabled && notification.snoozeRemaining > 0) {
-                            // スヌーズ処理
-                            notification.snoozeRemaining--;
-                            notification.nextTrigger = new Date(Date.now() + notification.snoozeMinutes * 60000).toISOString();
-                            await updateNotification(notification);
-                        } else {
-                            // スヌーズ終了または無効の場合は停止
-                            notification.active = false;
-                            await updateNotification(notification);
-                        }
-                    }
-                    
-                    // スケジュール通知の処理
-                    if (notification.type === 'schedule') {
-                        if (notification.isRepeating && notification.repeatWeekdays) {
-                            // 次の実行曜日を計算
-                            const nextTrigger = calculateNextWeeklyTrigger(notification);
-                            if (nextTrigger) {
-                                notification.nextTrigger = nextTrigger.toISOString();
-                                await updateNotification(notification);
-                            } else {
-                                notification.active = false;
-                                await updateNotification(notification);
-                            }
-                        } else {
-                            // 一回限りのスケジュール通知は無効化
-                            notification.active = false;
-                            await updateNotification(notification);
-                        }
-                    }
-                }
-            }
-        } catch (error) {
-            console.error('通知チェックエラー:', error);
-        }
+        await checkAndProcessNotifications();
     }, 30000); // 30秒ごとにチェック
 }
 
@@ -954,16 +1090,16 @@ function checkPWAInstallStatus() {
     }
 }
 
-// フォールバック用インストールヒント
-function showFallbackInstallHint() {
-    // 既にインストールボタンがある場合は何もしない
-    if (document.getElementById('installButton') || document.getElementById('installHint')) {
-        return;
-    }
-    
+// インストールヒント要素作成
+function createInstallHintElement() {
     const hint = document.createElement('div');
     hint.id = 'installHint';
-    hint.innerHTML = `
+    return hint;
+}
+
+// インストールヒントスタイル適用
+function applyInstallHintStyles(element) {
+    element.innerHTML = `
         <div style="
             position: fixed;
             bottom: 20px;
@@ -989,15 +1125,29 @@ function showFallbackInstallHint() {
             ">閉じる</button>
         </div>
     `;
+}
+
+// 自動削除タイマー設定
+function setupAutoRemoveTimer(element, timeout = 10000) {
+    setTimeout(() => {
+        if (element.parentElement) {
+            element.remove();
+        }
+    }, timeout);
+}
+
+// フォールバック用インストールヒント表示
+function showFallbackInstallHint() {
+    // 既にインストールボタンがある場合は何もしない
+    if (document.getElementById('installButton') || document.getElementById('installHint')) {
+        return;
+    }
+    
+    const hint = createInstallHintElement();
+    applyInstallHintStyles(hint);
     
     document.body.appendChild(hint);
-    
-    // 10秒後に自動で消す
-    setTimeout(() => {
-        if (hint.parentElement) {
-            hint.remove();
-        }
-    }, 10000);
+    setupAutoRemoveTimer(hint);
 }
 
 // インストールボタンを表示

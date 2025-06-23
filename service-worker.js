@@ -1,5 +1,5 @@
 // Service Worker - 何でもプッシュ通知
-const CACHE_NAME = 'push-notification-app-v8-phase1-fix';
+const CACHE_NAME = 'push-notification-app-v9-phase2-complete';
 const urlsToCache = [
     './',
     './index.html',

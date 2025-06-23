@@ -23,5 +23,11 @@ js/
 
 ### 実装ステータス
 - [x] Phase1: 画像非表示問題修正（非侵襲的画像保護）
-- [ ] Phase2: 大きな関数の分割
+- [x] Phase2: 大きな関数の分割（62行→小関数群に分割完了）
 - [ ] Phase3: ファイル分割とモジュール化
+
+### Phase2完了詳細
+- `renderCreateNotificationForm` (62行) → `renderBasicFields` + `renderTimerOptions` + `renderScheduleOptions` + `renderWeekdaySelector`
+- `handleFormSubmit` (66行) → `validateFormData` + `buildTimerNotification` + `buildScheduleNotification` + `processSnoozeSettings` + `processRepeatSettings`
+- `startNotificationChecker` (62行) → `shouldTriggerNotification` + `showBrowserNotification` + `updateSpeechBubble` + `handleTimerNotification` + `handleScheduleNotification` + `processTriggeredNotification` + `checkAndProcessNotifications`
+- `showFallbackInstallHint` (44行) → `createInstallHintElement` + `applyInstallHintStyles` + `setupAutoRemoveTimer`
