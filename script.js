@@ -838,13 +838,16 @@ async function requestNotificationPermission() {
     }
 }
 
-// 最新の通知メッセージを表示
+// 最新の通知メッセージを表示（初期化時はスキップ）
 async function updateLatestMessage() {
     try {
         const history = await getNotificationHistory();
         if (history.length > 0) {
             const latestMessage = history[0];
-            speechText.textContent = latestMessage.message;
+            // 初期化時以外のみ更新（greetingを保護）
+            if (speechText.textContent !== characters[currentCharacterIndex].greetings[0]) {
+                speechText.textContent = latestMessage.message;
+            }
         }
     } catch (error) {
         console.error('履歴の取得に失敗しました:', error);
@@ -1025,9 +1028,15 @@ function calculateNextWeeklyTrigger(notification) {
 
 // アプリ起動時の初期化を拡張
 document.addEventListener('DOMContentLoaded', async () => {
+    // 初期化処理を順序立てて実行
     await initializeApp();
+    
+    // UI初期設定
     setupEventListeners();
     updateCharacterDisplay();
+    updateNavDots();
+    
+    // 初期グリーティング表示（キャラクターの挨拶）
     updateSpeechBubble();
     
     // 通知権限を確認・要求
@@ -1036,11 +1045,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 定期的な通知チェックを開始
     startNotificationChecker();
     
-    // 最新メッセージを表示
-    await updateLatestMessage();
-    
     // 画像保護設定
     setupImageProtection();
+    
+    // 最新メッセージがあれば表示（greetingを上書きしないよう修正済み）
+    await updateLatestMessage();
 });
 
 // PWAインストール設定

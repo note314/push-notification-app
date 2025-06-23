@@ -550,11 +550,11 @@ body {
 /* レスポンシブ対応 */
 @media (max-width: 767px) {
     .character-section {
-        min-height: 0;
+        min-height: 200px;
     }
     
     .character-slider {
-        min-height: 0;
+        min-height: 150px;
     }
 }
 
